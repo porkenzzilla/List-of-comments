@@ -1,0 +1,80 @@
+* {
+  box-sizing: border-box;
+}
+
+input[type=text], textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+label {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+
+input[type=submit] {
+  background-color: #7a807a;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+}
+
+input[type=submit]:hover {
+  background-color: #bfc0bf;
+}
+
+.container {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px;
+}
+
+.forLable {
+  float: left;
+  width: 25%;
+  margin-top: 6px;
+}
+
+.forText {
+  float: left;
+  width: 75%;
+  margin-top: 6px;
+}
+
+.forText::placeholder {
+  font-size: 1em;
+  font-style: italic;
+}
+
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.pagination {
+  display: inline-block;
+  margin: 30px;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 8px 16px;
+  text-decoration: none;
+}
+
+.pagination a:hover {background-color: #ddd;}
+
+@media screen and (max-width: 600px) {
+  .forLable, .forText, input[type=submit] {
+    width: 100%;
+    margin-top: 0;
+  }
+}
