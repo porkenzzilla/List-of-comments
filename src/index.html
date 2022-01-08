@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <base href="/">
-    <link type="text/css" href="/List_of_comments/src/style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+    <link rel="icon" type="image/icon type" href="https://img.icons8.com/material-outlined/24/000000/comments--v2.png">
     <title>List of comments</title>
 </head>
 <body>
@@ -36,38 +35,178 @@
             </div>
         </form>
 
-        <div class="pagination">
-            <button id="button" type="button" onclick="getResponse()">Show more</button>
-            <a href="#">&laquo;</a>
-            <a href="#">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#">4</a>
-            <a href="#">5</a>
-            <a href="#">6</a>
-            <a href="#">&raquo;</a>
+        <div>
+            <button type="button" id="button" onclick="getResponse('https://jordan.ashton.fashion/api/goods/30/comments')">Show more</button>
+        </div>
+        <div>
+            <nav>
+                <ul id="pagination">
+                </ul>
+            </nav>
           </div>
           <div id="comment-field"></div>
     </div>
-    <script type="text/javascript" src="/List_of_comments/dist/bundle.js" charset="utf-8"></script>
-    <script>
-const requestUrl = "https://jordan.ashton.fashion/api/goods/30/comments";
+<script defer>
+function timeConverter(UNIX_timestamp){
+	let a = new Date(UNIX_timestamp * 1000);
+	let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+	let year = a.getFullYear();
+	let month = months[a.getMonth()];
+	let date = a.getDate();
+	let hour = a.getHours();
+	let min = a.getMinutes();
+	let sec = a.getSeconds();
+	let time = `${date} ${month} ${year} ${hour}:${min}:${sec}`;
+	return time;
+}
+const requestUrl = 'https://jordan.ashton.fashion/api/goods/30/comments';
+  const button = document.getElementById("button");
+  const pagination = document.getElementById("pagination");
+  
+  function removeAllActive(arr) {
+    arr.forEach(function (item) {
+      item.classList.remove('active');
+    });
+  }
 
-function getResponse(){
-let commentField = document.getElementById('comment-field');
-let out = '';
+  let num = 1;
+  let currentPage = 1;
+
+  function getResponse(url){
+    return fetch(url)
+    .then((res) => res.json())
+    .then((data) => {
+        let commentField = document.getElementById('comment-field');
+        let out = '';
+        commentField.innerHTML = out;
+    JSON.stringify(data.data.map((item)=>{
+        out += `<p class="text-right small"><em>${timeConverter(Date.parse(item.updated_at) / 1000)}</em></p>`;
+        out += `<p class="alert alert-primary" role="alert">Name: <b>${item.name}</b></p>`;
+        out += `<p class="alert alert-success" role="alert">Comment: <b>${item.text}</b></p>`;
+        commentField.innerHTML = out;
+    }))
+    const allATags = document.querySelectorAll("a");
+    const aArr = Array.from(allATags);
+    let active;
+    if(num === 1){
+      aArr[num].classList.add("active");
+      num = null;
+    }
+    aArr[0].removeAttribute("style");
+    aArr[aArr.length - 1].removeAttribute("style");
+    for(let i = 1; i < aArr.length - 1; i++){
+    aArr[i].removeAttribute("style");
+    
+    aArr[i].addEventListener("click", function(){
+      if(aArr[i] !== aArr[0] && aArr[i] !== aArr[aArr.length - 1]){
+          currentPage = aArr.indexOf(aArr[i]);
+      }
+      removeAllActive(aArr)
+      if(num === 1){
+      aArr[num].classList.remove("active");
+      num = null;
+      }
+
+        if(active){
+            active.classList.remove("active");
+        }
+        active = this;
+        this.classList.add("active");
+    })
+    }  
+  })
+}
+
+window.onload = function(){
 fetch(requestUrl)
-.then((res) => res.json())
-.then((data) =>
-JSON.stringify(data.data.map(function(item){
-    out += `<p class="text-right small"><em>${item.updated_at}</em></p>`;
-    out += `<p class="alert alert-primary" role="alert">Name: <b>${item.name}</b></p>`;
-    out += `<p class="alert alert-success" role="alert">Comment: <b>${item.text}</b></p>`;
-    commentField.innerHTML = out;
-})
-)
-)
-};
+    .then((res) => res.json())
+    .then((data) => {
+      const allATags = document.querySelectorAll("a");
+      const aArr = Array.from(allATags);
+  let pagesCount = aArr.length - 1;
+  
+  const previous = document.querySelector("#previous");
+  const next = document.querySelector("#next");
+  
+  // Handle Click on Previous and Next Buttons
+  next.onclick = nextSlide;
+  previous.onclick = prevSlide;
+  
+  // Previous Slide Function
+  function prevSlide() {
+    if(!aArr[1]){
+      removeAllActive(aArr);
+    }
+   /* if (previous.classList.contains('disabled')) {
+      return false;
+    } */
+    if(currentPage !== 1 && currentPage > 0){
+      currentPage--;
+      theChecker();
+      getResponse(String(data.links[currentPage].url))
+    }
+  }
+
+    // Next Slide Function
+    function nextSlide() {
+      if(!aArr[aArr.length - 2]){
+      removeAllActive(aArr);
+      }
+     /* if (next.classList.contains('disabled')) {
+        return false;
+      } */ 
+      else if(currentPage !== aArr.length - 2 && currentPage < aArr.length - 1){
+        currentPage++;
+        theChecker();
+        getResponse(String(data.links[currentPage].url));
+        
+        
+    }
+  }
+  
+  // Create The Checker Function
+  function theChecker() {
+  
+    // Remove All Active Classes
+    removeAllActive(aArr);
+  
+    // Set Active Class On Current Slide
+    
+    aArr[currentPage].classList.add('active');
+    
+    // Check if Current Slide is The First
+    if (currentPage == 1) {
+  
+      // Add Disabled Class on Previous Button
+      previous.classList.add('disabled');
+  
+    } else {
+  
+      // Remove Disabled Class From Previous Button
+      previous.classList.remove('disabled');
+  
+    }
+  
+    // Check if Current Slide is The Last
+    if (currentPage == pagesCount) {
+  
+      // Add Disabled Class on Next Button
+      next.classList.add('disabled');
+  
+    } else {
+  
+      // Remove Disabled Class From Next Button
+      next.classList.remove('disabled');
+    }
+  }
+      
+  for(let j = 0; j < aArr.length; j++){
+        if(aArr[j].classList.contains("active")){
+          currentPage = +aArr.indexOf(aArr[j])
+        }
+  }
+});
+}
 </script>
 </body>
 </html>

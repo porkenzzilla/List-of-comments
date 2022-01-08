@@ -8,7 +8,7 @@ module.exports = {
     path: path.join(__dirname, 'dist')
   },
   devServer: {
-    port: 2100
+    port: 3100
   },
 plugins: [
     new HTMLPlugin({

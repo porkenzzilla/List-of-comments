@@ -2,6 +2,7 @@
   box-sizing: border-box;
 }
 
+/* style for user name and user comment */
 input[type=text], textarea {
   width: 100%;
   padding: 12px;
@@ -58,20 +59,47 @@ input[type=submit]:hover {
   clear: both;
 }
 
-.pagination {
-  display: inline-block;
-  margin: 30px;
+/* style for pagination */
+#button {
+  border-radius: 20px;
+  margin-top: 40px;
 }
 
-.pagination a {
-  color: black;
+#pagination {
+  display: inline-block;
+  margin: 10px;
+}
+
+#pagination > li {
   float: left;
-  padding: 8px 16px;
+  margin: 10px 0px 0px 0px;
+}
+
+a{
+  color: black;
+  padding: 4px 16px;
   text-decoration: none;
 }
 
-.pagination a:hover {background-color: #ddd;}
+#pagination > li {
+  list-style-type: none;
+}
 
+#pagination a.active {
+background-color:#8a8a8a;
+color:black;
+}
+
+#pagination a:hover:not(.active) {
+  background-color:#d4d4d4;
+  color: black;
+}
+
+#comment-field {
+  word-wrap: break-word;
+}
+
+/* style for responsive */
 @media screen and (max-width: 600px) {
   .forLable, .forText, input[type=submit] {
     width: 100%;

@@ -22,11 +22,11 @@ document.getElementById('comment-add').onclick = function(){
 }
 
 function saveComments(){
-    sessionStorage.setItem('comments', JSON.stringify(comments));
+  localStorage.setItem('comments', JSON.stringify(comments));
 }
 
 function loadComments(){
-    if (sessionStorage.getItem('comments')) comments = JSON.parse(sessionStorage.getItem('comments'));
+    if (localStorage.getItem('comments')) comments = JSON.parse(localStorage.getItem('comments'));
     showComments();
 }
 
@@ -40,18 +40,6 @@ function showComments (){
     });
     commentField.innerHTML += out;
 }
-
-var xhr = new XMLHttpRequest();
-var url = "url?data=" + encodeURIComponent(JSON.stringify({"email": "hey@mail.com", "password": "101010"}));
-xhr.open("GET", url, true);
-xhr.setRequestHeader("Content-Type", "application/json");
-xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-        var json = JSON.parse(xhr.responseText);
-        console.log(json.email + ", " + json.password);
-    }
-};
-xhr.send();
 
 function timeConverter(UNIX_timestamp){
     var a = new Date(UNIX_timestamp * 1000);
@@ -67,23 +55,28 @@ function timeConverter(UNIX_timestamp){
   }
 
   /* code for get data */
-  /* code for get data */
-  /* code for get data */
 
-const requestUrl = "https://jordan.ashton.fashion/api/goods/30/comments";
-const button = document.getElementById("button");
+  const requestUrl = 'https://jordan.ashton.fashion/api/goods/30/comments';
+  const pagination = document.getElementById("pagination");
 
-function getResponse(){
-    let commentField = document.getElementById('comment-field');
-    let out = '';
-   button.click( fetch(requestUrl).json()
-    .then((data) => 
-    JSON.stringify(data.data.map(function(item){
-        out += `<p class="text-right small"><em>${item.updated_at}</em></p>`;
-        out += `<p class="alert alert-primary" role="alert">Name: <b>${item.name}</b></p>`;
-        out += `<p class="alert alert-success" role="alert">Comment: <b>${item.text}</b></p>`;
-        commentField.innerHTML = out;
+ function getUrl(){
+    fetch(requestUrl)
+        .then((res) => res.json())
+        .then((data) => {
+        for(let i = 0; i < data.links.length; i++){
+            if(JSON.stringify(data.links[i].label).match("&laquo; Previous")){
+                pagination.innerHTML += `<li><a id="previous" style="pointer-events: none">
+                ${data.links[i].label}</a></li>`;
+                i++
+            }
+            if(JSON.stringify(data.links[i].label).match("Next &raquo;")){
+                pagination.innerHTML += `<li><a id="next" style="pointer-events: none">
+                ${data.links[i].label}</a></li>`;
+                return;
+            }
+           pagination.innerHTML += `<li><a onclick=getResponse(${JSON.stringify(data.links[i].url)}) style="pointer-events: none">
+           ${data.links[i].label}</a></li>`;
+        }
     })
-    )
-    ))
-  };
+    }
+    getUrl();
